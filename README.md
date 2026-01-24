@@ -22,8 +22,8 @@ However, since the system only gives me as little as 10 minutes to shut down my 
 
 ### Hadware in Use
 
-| Hardware                            | Link                                                             | Description                                              |
-| ----------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
-| Tapo Smart Plug (P110M)             | https://www.amazon.com/dp/B0DKG52WQ4                             | Used to control and monitor printer power.               |
-| APC Back-UPS Pro 1500VA UPS Battery | https://www.amazon.com/dp/B06VY6FXMM                             | Provides power to printers during an outage.             |
-| Raspberry Pi Zero 2 W               | https://www.microcenter.com/product/643085/raspberry-pi-zero-2-w | Used for detection and to control outage reaction logic. |
+| Hardware                            | Description                                              | Link                                                             |
+| ----------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| Tapo Smart Plug (P110M)             | Used to control and monitor printer power.               | https://www.amazon.com/dp/B0DKG52WQ4                             |
+| APC Back-UPS Pro 1500VA UPS Battery | Provides power to printers during an outage.             | https://www.amazon.com/dp/B06VY6FXMM                             |
+| Raspberry Pi Zero 2 W               | Used for detection and to control outage reaction logic. | https://www.microcenter.com/product/643085/raspberry-pi-zero-2-w |
