@@ -10,15 +10,16 @@ However, since the system only gives me as little as 10 minutes to shut down my 
 
 ### Planned Features
 
-- Load monitoring/response software at Pi startup
-  - Set Up Pi OS
-  - Connect Pi to Power Backup
-  - Write Base Program
-- Detect power/battery status
-- Detect time remaining on battery
-- Upon outage, relay outage status and time remaining message with built in retries
+- ✔ Load monitoring/response software at Pi startup
+  - ✔ Set Up Pi OS
+  - ✔ Connect Pi to Power Backup
+  - ✔ Write Base Program
+- ✔ Detect power/battery status
+- ✔ Detect time remaining on battery
+- ✔ Upon outage, relay outage status and time remaining message
 - Upon outage, send pause command to all printers with built in retries
 - Upon printers paused, send shutdown command to plugs
+- Upon completion of process, send report message
 
 ### Hadware in Use
 
@@ -49,7 +50,7 @@ sudo apt update
 sudo apt install nut
 ```
 
-Open the main NUT config:
+**1. Open the main NUT config:**
 
 ```bash
 sudo nano /etc/nut/nut.conf
@@ -61,7 +62,9 @@ Make sure it contains:
 MODE=standalone
 ```
 
-Edit the UPS definition file:
+Save and exit.
+
+**2. Edit the UPS definition file:**
 
 ```bash
 sudo nano /etc/nut/ups.conf
@@ -84,7 +87,7 @@ The name apcups can be anything — we’ll use it consistently
 
 Save and exit.
 
-Edit the user config:
+**3. Edit the user config:**
 
 ```bash
 sudo nano /etc/nut/upsd.users
@@ -102,9 +105,7 @@ In this case I share the same password as the RPi
 
 Save and exit.
 
-Tell upsmon who to monitor
-
-Edit:
+**4. Tell upsmon who to monitor**
 
 ```bash
 sudo nano /etc/nut/upsmon.conf
@@ -118,7 +119,7 @@ MONITOR apcups@localhost 1 monuser strongpasswordhere master
 
 Make sure the password matches what you set above.
 
-Step 7: Start NUT
+**5. Start NUT**
 
 Run:
 
@@ -141,12 +142,12 @@ systemctl status nut-monitor
 
 Both should be active (running).
 
-**Troubleshooting:**
-
-_Can't connect to UPS [apcups] (usbhid-ups-apcups): No such file or directory_:
-
-In my case I needed to disable `maxretry` in `/etc/nut/ups.conf`
-
+> **Troubleshooting:**
+>
+> _Can't connect to UPS [apcups] (usbhid-ups-apcups): No such file or directory_:
+>
+> In my case I needed to disable `maxretry` in `/etc/nut/ups.conf`
+>
 > _pikachu@pikachu:~ $ sudo upsdrvctl start_
 > _Network UPS Tools - UPS driver controller 2.8.1_
 > _Network UPS Tools - Generic HID driver 0.52 (2.8.1)_
@@ -156,61 +157,59 @@ In my case I needed to disable `maxretry` in `/etc/nut/ups.conf`
 > _upsnotify: notify about state 4 with libsystemd: was requested, but not running as a service unit now, will not spam more about it_
 > _upsnotify: failed to notify about state 4: no notification tech defined, will not spam more about it_
 > _Driver failed to start (exit status=1)_
+>
+> Add nut to plugdev:
+>
+> This is the most important step.
+>
+> ```bash
+> sudo usermod -aG plugdev nut
+> ```
+>
+> Now reboot (this matters — group changes don’t apply until then):
+>
+> ```bash
+> sudo reboot
+> ```
+>
+> After reboot, verify udev rules exist (usually already installed):
+>
+> ```bash
+> ls /lib/udev/rules.d | grep nut
+> ```
+>
+> You should see something like:
+>
+> ```bash
+> 52-nut-usb.rules
+> ```
+>
+> If you see it — great, move on.
+>
+> If you don’t see it (unlikely, but just in case)
+>
+> Run:
+>
+> ```bash
+> sudo apt install nut-usb
+> ```
+>
+> Then reboot again.
+>
+> After reboot, start the driver (again):
+>
+> ```bash
+> sudo upsdrvctl start
+> ```
+>
+> Expected GOOD output
+>
+> ```bash
+> Network UPS Tools - UPS driver controller 2.8.1
+> Starting UPS: apcups
+> ```
 
-Add nut to plugdev:
-
-This is the most important step.
-
-```bash
-sudo usermod -aG plugdev nut
-```
-
-Now reboot (this matters — group changes don’t apply until then):
-
-```bash
-sudo reboot
-```
-
-After reboot, verify udev rules exist (usually already installed):
-
-```bash
-ls /lib/udev/rules.d | grep nut
-```
-
-You should see something like:
-
-```bash
-52-nut-usb.rules
-```
-
-If you see it — great, move on.
-
-If you don’t see it (unlikely, but just in case)
-
-Run:
-
-```bash
-sudo apt install nut-usb
-```
-
-Then reboot again.
-
-After reboot, start the driver (again):
-
-```bash
-sudo upsdrvctl start
-```
-
-Expected GOOD output
-
-```bash
-Network UPS Tools - UPS driver controller 2.8.1
-Starting UPS: apcups
-```
-
-Step 8: Verify UPS data (the fun part)
-
-Now run:
+**6. Verify UPS data (the fun part)**
 
 ```bash
 upsc apcups@localhost
@@ -218,17 +217,14 @@ upsc apcups@localhost
 
 You should see a wall of useful data, including things like:
 
-ups.status: OL → On Line power
-
-battery.charge: 100
-
-battery.runtime: XXXX
-
+ups.status: OL → On Line power  
+battery.charge: 100  
+battery.runtime: XXXX  
 input.voltage: XXX
 
 This confirms:
-✔ USB comms work
-✔ Driver is correct
+✔ USB comms work  
+✔ Driver is correct  
 ✔ NUT is functioning
 
 ### Bash Script for Reaction to Loss of Power
