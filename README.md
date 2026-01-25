@@ -6,6 +6,10 @@ I live in an area where I experience semi-frequent power outages of varying leng
 
 However, since the system only gives me as little as 10 minutes to shut down my printers, it is very likely that I will miss the power outage if I am in bed, or just outside of the house. I am developing this suite of automations to help detect and automatically react to power outages. I may expand the capabilities further as use cases present themself.
 
+---
+
+---
+
 ## System Development
 
 ### Planned Features
@@ -21,7 +25,9 @@ However, since the system only gives me as little as 10 minutes to shut down my 
 - Upon printers paused, send shutdown command to plugs
 - Upon completion of process, send report message
 
-### Hadware in Use
+---
+
+### Hardware in Use
 
 | Hardware                            | Description                                              | Link                                                                             |
 | ----------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -31,6 +37,8 @@ However, since the system only gives me as little as 10 minutes to shut down my 
 | Micro-USB Power Plug and Adapter    | Power for Raspberry Pi                                   | \*\*\*                                                                           |
 | USB-B (or data) to USB-A Cable      | Connect Raspberry Pi to Power Backup                     | Included with Power Backup                                                       |
 | USB-A to Micro-USB OTG Adapter      | Connect Raspberry Pi to Power Backup                     | \*\*\*                                                                           |
+
+---
 
 ### Rapsberry Pi Setup
 
@@ -42,6 +50,8 @@ However, since the system only gives me as little as 10 minutes to shut down my 
 ```bash
 lsusb
 ```
+
+---
 
 ### Install NUT
 
@@ -222,30 +232,32 @@ battery.charge: 100
 battery.runtime: XXXX  
 input.voltage: XXX
 
-This confirms:
+This confirms:  
 ✔ USB comms work  
 ✔ Driver is correct  
 ✔ NUT is functioning
+
+---
 
 ### Bash Script for Reaction to Loss of Power
 
 Quick push-notification example (using ntfy, simple and free)
 
-Install ntfy:
+1. Install ntfy:
 
 ```bash
 sudo wget https://github.com/binwiederhier/ntfy/releases/download/v2.15.0/ntfy_2.15.0_linux_armv7.tar.gz
 sudo tar zxvf ntfy_2.15.0_linux_armv7.tar.gz
 ```
 
-Install Binaries
+2. Install Binaries
 
 ```bash
 sudo mv ntfy_2.15.0_linux_armv7/ntfy /usr/local/bin/
 sudo chmod +x /usr/local/bin/ntfy
 ```
 
-Hooking into NUT
+3. Hooking into NUT
 
 We can configure a simple script that runs whenever the UPS status changes:
 
@@ -266,7 +278,7 @@ NOTIFYFLAG LOWBATT SYSLOG+EXEC
 NOTIFYFLAG SHUTDOWN SYSLOG+EXEC
 ```
 
-Create /usr/local/bin/ups-notify.sh:
+4. Create Script
 
 ```bash
 sudo nano /usr/local/bin/ups-notify.sh
@@ -274,45 +286,15 @@ sudo nano /usr/local/bin/ups-notify.sh
 
 Add code:
 
-```bash
-#!/bin/bash
+**_The code can be found in the file `ups-notify.sh`_**
 
-TOPIC="pikachupoweroutage1925"
-HOSTNAME=$(hostname)
-EVENT="$1"
-
-send_ntfy() {
-    /usr/local/bin/ntfy publish "$TOPIC" "$1"
-}
-
-case "$EVENT" in
-    ONBATT)
-        send_ntfy "Power outage detected on $HOSTNAME. UPS is running on battery."
-        ;;
-    ONLINE)
-        send_ntfy "Power restored on $HOSTNAME. UPS is back on line power."
-        ;;
-    LOWBATT)
-        send_ntfy "LOW BATTERY on $HOSTNAME! Shutdown imminent."
-        ;;
-    SHUTDOWN)
-        send_ntfy "UPS has initiated system shutdown on $HOSTNAME."
-        ;;
-    *)
-        send_ntfy "UPS event '$EVENT' occurred on $HOSTNAME."
-        ;;
-esac
-
-exit 0
-```
-
-Make it executable:
+5. Make the script executable:
 
 ```bash
 sudo chmod +x /usr/local/bin/ups-notify.sh
 ```
 
-How to make it survive reboots
+6. Make the script survive reboots
 
 Sometimes, adding a small systemd override ensures upsdrvctl starts after USB is ready:
 
@@ -336,7 +318,7 @@ sudo systemctl restart nut-server
 
 This makes sure the driver is ready before nut-monitor starts.
 
-2. Confirm upsmon starts on boot
+Confirm upsmon starts on boot
 
 ```bash
 sudo systemctl enable nut-monitor
@@ -344,15 +326,7 @@ sudo systemctl enable nut-monitor
 
 ✅ This ensures your monitor service starts automatically after a reboot.
 
-Now every time the UPS changes state, you’ll get a notification.
-
-Observe UPS runtime and plan shutdown
-
-Before automating printers, let’s measure the real runtime under load:
-
-```bash
-upsc apcups@localhost
-```
+7. Verify Process
 
 Restart NUT services
 
@@ -369,20 +343,46 @@ systemctl status nut-monitor
 
 You want to see active (running) with no repeating errors.
 
-Step 5: Test without pulling the plug (important!)
+Test without pulling the plug (important!)
 
 You can simulate events safely.
 
 Test ONBATT:
 
 ```bash
-sudo /usr/local/bin/ups-notify.sh ONBATT
+sudo NOTIFYTYPE=ONBATT /usr/local/bin/ups-notify.sh
 ```
 
 Test ONLINE:
 
 ```bash
-sudo /usr/local/bin/ups-notify.sh ONLINE
+sudo NOTIFYTYPE=ONLINE /usr/local/bin/ups-notify.sh
 ```
 
 📱 You should get push notifications immediately.
+
+---
+
+### Set Static IP for Printers
+
+Reserve an IP in your router (recommended)
+
+Most home routers support “DHCP reservation” or “Static lease.”
+
+Steps (general):
+
+Log in to your router’s admin page.
+
+Find the DHCP reservation / LAN IP reservation section.
+
+Locate your Bambu printer in the connected devices list.
+
+Usually shows as “Bambu” or the MAC address printed on the printer or in the network menu.
+
+Assign it a fixed IP (e.g., 192.168.1.42).
+
+Save and reboot the printer if necessary.
+
+### Python Script for Pausing Printers
+
+I have added `config.py` to .gitignore as a way of concealing these variables when I push my changes to GitHub. When doing this from scratch, you will need to create a file called `config.py` and import the variables into `mqtt.py`
