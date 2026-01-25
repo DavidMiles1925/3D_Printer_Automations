@@ -71,7 +71,7 @@ def main():
                     event = f.read().strip()
                     if event == "ONBATT":
                         # Pause all printers — loop over serials if needed
-                        pause_print(client, "<PRINTER_SERIAL>")  # Replace with real serial
+                        pause_print(client, X1_CARBON_SERIAL)  # Replace with real serial
                         # Clear the event so we don’t repeat
                         open(UPS_TOPIC, "w").close()
             except FileNotFoundError:

@@ -42,7 +42,7 @@ case "$EVENT" in
         send_ntfy 3 "✅ Power restored on $HOSTNAME. UPS is back on line power."
         ;;
     LOWBATT)
-        send_ntfy 2 "🚨 LOW BATTERY on $HOSTNAME! Shutdown imminent. $(get_runtime)"
+        send_ntfy 2 "🚨 LOW BATTERY on $HOSTNAME! This may also be cause by H2S starting up. $(get_runtime)"
         ;;
     SHUTDOWN)
         send_ntfy 4 "🛑 UPS has initiated system shutdown on $HOSTNAME."

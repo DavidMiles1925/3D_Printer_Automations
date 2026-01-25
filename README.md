@@ -383,6 +383,24 @@ Assign it a fixed IP (e.g., 192.168.1.42).
 
 Save and reboot the printer if necessary.
 
-### Python Script for Pausing Printers
+### Monitoring Script
+
+A simple script that prints out battery information. This can potentially be expanded later for logging and gathering battery health data.
+
+The script is called [monitor.py]()
+
+```yaml
+==================================================
+UPS Status      : ONBATT
+Battery Charge : 82%
+Runtime Left   : ~37 minutes
+Load           : 21%
+Input Voltage  : 120.0 V
+Output Voltage : 27.3 V
+```
+
+### Script for Pausing Printers
+
+With bash script for notifications workinig, it is time to work on something more advanced. I plan to use a python script to automate the pausing of printers. The feasibility here is limited for me because Bambu has such a closed ecosystem. I will also try with the creality printers which I have more hope for.
 
 I have added `config.py` to .gitignore as a way of concealing these variables when I push my changes to GitHub. When doing this from scratch, you will need to create a file called `config.py` and import the variables into `mqtt.py`
