@@ -21,6 +21,8 @@ send_ntfy() {
     local PRIORITY="$1"
     local MESSAGE="$2"
 
+# For older Raspberry Pi Zero, (or if 3206 Illegal instruction) delete below and enable the code in the comment.
+#   curl -sS -H "Priority: $PRIORITY" -d "$MESSAGE" "https://ntfy.sh/$TOPIC"
     /usr/local/bin/ntfy publish \
         --priority "$PRIORITY" \
         "$TOPIC" \

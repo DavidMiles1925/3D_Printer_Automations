@@ -219,7 +219,13 @@ Both should be active (running).
 > Starting UPS: apcups
 > ```
 
-**6. Verify UPS data (the fun part)**
+**6. Reboot**
+
+```bash
+sudo reboot
+```
+
+**7. Verify UPS data (the fun part)**
 
 ```bash
 upsc apcups@localhost
@@ -236,6 +242,17 @@ This confirms:
 ✔ USB comms work  
 ✔ Driver is correct  
 ✔ NUT is functioning
+
+> **Troubleshooting:**
+>
+> _Error: Driver not connected_:
+>
+> - Ensure you rebooted after step 5.
+> - Try manually starting the driver
+>
+> ```bash
+> sudo upsdrvctl start
+> ```
 
 ---
 
@@ -360,6 +377,33 @@ sudo NOTIFYTYPE=ONLINE /usr/local/bin/ups-notify.sh
 ```
 
 📱 You should get push notifications immediately.
+
+> **Troubleshooting:**
+>
+> _3206 Illegal instruction_:
+>
+> This happens on earlier Raspberry Pi Hardware (for me it was Raspberry Pi Zero, when the program was developed for Raspberry Pi Zero 2 W)
+>
+> Replace your send_ntfy() with something like:
+> send_ntfy() {
+> PRIORITY="$1"
+>  MESSAGE="$2"
+>  curl -sS -H "Priority: $PRIORITY" -d "$MESSAGE" "https://ntfy.sh/$TOPIC"
+> }
+>
+> **Test**
+>
+> ```bash
+> curl -d "Test from the 3D printer!" ntfy.sh/your_topic_here
+> ```
+
+**8. Check Logs**
+
+The script logs each time an event is triggered.
+
+```bash
+cat /var/log/ups-notify.log
+```
 
 ---
 

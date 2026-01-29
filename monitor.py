@@ -7,7 +7,7 @@ import os
 
 UPS_NAME = "apcups"      # same name you used in your bash script
 UPSCMD = "/usr/bin/upsc"
-REFRESH_SECONDS = 5
+REFRESH_SECONDS = 2
 
 
 def get_ups_data():
