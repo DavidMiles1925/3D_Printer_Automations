@@ -154,19 +154,21 @@ Both should be active (running).
 
 > **Troubleshooting:**
 >
-> _Can't connect to UPS [apcups] (usbhid-ups-apcups): No such file or directory_:
+> - _Can't connect to UPS [apcups] (usbhid-ups-apcups): No such file or directory_:
 >
 > In my case I needed to disable `maxretry` in `/etc/nut/ups.conf`
 >
-> _pikachu@pikachu:~ $ sudo upsdrvctl start_
-> _Network UPS Tools - UPS driver controller 2.8.1_
-> _Network UPS Tools - Generic HID driver 0.52 (2.8.1)_
-> _USB communication driver (libusb 1.0) 0.46_
-> _libusb1: Could not open any HID devices: insufficient permissions on everything_
-> _No matching HID UPS found_
-> _upsnotify: notify about state 4 with libsystemd: was requested, but not running as a service unit now, will not spam more about it_
-> _upsnotify: failed to notify about state 4: no notification tech defined, will not spam more about it_
-> _Driver failed to start (exit status=1)_
+> ---
+>
+> - _pikachu@pikachu:~ $ sudo upsdrvctl start_
+>   _Network UPS Tools - UPS driver controller 2.8.1_
+>   _Network UPS Tools - Generic HID driver 0.52 (2.8.1)_
+>   _USB communication driver (libusb 1.0) 0.46_
+>   _libusb1: Could not open any HID devices: insufficient permissions on everything_
+>   _No matching HID UPS found_
+>   _upsnotify: notify about state 4 with libsystemd: was requested, but not running as a service unit now, will not spam more about it_
+>   _upsnotify: failed to notify about state 4: no notification tech defined, will not spam more about it_
+>   _Driver failed to start (exit status=1)_
 >
 > Add nut to plugdev:
 >
