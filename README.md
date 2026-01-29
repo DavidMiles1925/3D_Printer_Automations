@@ -385,11 +385,14 @@ sudo NOTIFYTYPE=ONLINE /usr/local/bin/ups-notify.sh
 > This happens on earlier Raspberry Pi Hardware (for me it was Raspberry Pi Zero, when the program was developed for Raspberry Pi Zero 2 W)
 >
 > Replace your send_ntfy() with something like:
+>
+> ```bash
 > send_ntfy() {
-> PRIORITY="$1"
->  MESSAGE="$2"
->  curl -sS -H "Priority: $PRIORITY" -d "$MESSAGE" "https://ntfy.sh/$TOPIC"
+>   PRIORITY="$1"
+>   MESSAGE="$2"
+>   curl -sS -H "Priority: $PRIORITY" -d "$MESSAGE" "https://ntfy.sh/$TOPIC"
 > }
+> ```
 >
 > **Test**
 >
