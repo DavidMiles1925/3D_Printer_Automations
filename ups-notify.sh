@@ -1,13 +1,13 @@
 #!/bin/bash
 
-TOPIC="pikachupoweroutage1925"
+TOPIC="topicname"
 HOSTNAME=$(hostname)
 EVENT="$NOTIFYTYPE"
 UPS_NAME="apcups"
 UPSCMD="/usr/bin/upsc"
 LOGFILE="/var/log/ups-notify.log"
 UPS_CMD="/usr/sbin/upscmd"
-UPS_AUTH="-u monuser -p thundershock"
+UPS_AUTH="-u battcmd -p strongpasswordhere"
 
 set_beeper() {
   action="$1"   # enable or disable
@@ -45,9 +45,11 @@ send_ntfy() {
 
 case "$EVENT" in
     ONBATT)
+        set_beeper enable
         send_ntfy 5 "⚠️ Power outage detected on $HOSTNAME. UPS is running on battery. $(get_runtime)"
         ;;
     ONLINE)
+        set_beeper disable
         send_ntfy 3 "✅ Power restored on $HOSTNAME. UPS is back on line power."
         ;;
     LOWBATT)

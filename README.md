@@ -109,6 +109,11 @@ Add:
 [monuser]
   password = strongpasswordhere
   upsmon master
+
+[battcmd]
+  password = strongpasswordhere
+  instcmds = beeper.enable
+  instcmds = beeper.disable
 ```
 
 In this case I share the same password as the RPi
@@ -262,6 +267,8 @@ This confirms:
 
 Quick push-notification example (using ntfy, simple and free)
 
+**Prerequisite: YOU MUST CREATE A NTFY TOPIC ON YOUR PHONE APP.**
+
 1. Install ntfy:
 
 ```bash
@@ -306,6 +313,8 @@ sudo nano /usr/local/bin/ups-notify.sh
 Add code:
 
 **_The code can be found in the file `ups-notify.sh`_**
+
+- Be sure to change the vales of "topicname" and "strongpasswordhere" to whatever you set up in `upsd.users`.
 
 5. Make the script executable:
 
