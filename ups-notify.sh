@@ -1,13 +1,13 @@
 #!/bin/bash
 
-TOPIC="topic_name_here"
+TOPIC="pikachupoweroutage1925"
 HOSTNAME=$(hostname)
 EVENT="$NOTIFYTYPE"
 UPS_NAME="apcups"
 UPSCMD="/usr/bin/upsc"
 LOGFILE="/var/log/ups-notify.log"
 UPS_CMD="/usr/sbin/upscmd"
-UPS_AUTH="-u monuser -p password"
+UPS_AUTH="-u monuser -p thundershock"
 
 set_beeper() {
   action="$1"   # enable or disable
