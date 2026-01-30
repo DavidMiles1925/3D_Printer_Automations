@@ -1,11 +1,18 @@
 #!/bin/bash
 
-TOPIC="pikachupoweroutage1925"
+TOPIC="topic_name_here"
 HOSTNAME=$(hostname)
 EVENT="$NOTIFYTYPE"
 UPS_NAME="apcups"
 UPSCMD="/usr/bin/upsc"
 LOGFILE="/var/log/ups-notify.log"
+UPS_CMD="/usr/sbin/upscmd"
+UPS_AUTH="-u monuser -p password"
+
+set_beeper() {
+  action="$1"   # enable or disable
+  $UPS_CMD $UPS_AUTH "$UPS_NAME" "beeper.$action" >/dev/null 2>&1 || true
+}
 
 get_runtime() {
     runtime=$($UPSCMD $UPS_NAME battery.runtime 2>/dev/null)
@@ -44,7 +51,7 @@ case "$EVENT" in
         send_ntfy 3 "✅ Power restored on $HOSTNAME. UPS is back on line power."
         ;;
     LOWBATT)
-        send_ntfy 2 "🚨 LOW BATTERY on $HOSTNAME! This may also be cause by H2S starting up. $(get_runtime)"
+        send_ntfy 2 "LOW BATTERY on $HOSTNAME! This may also be cause by H2S starting up. $(get_runtime)"
         ;;
     SHUTDOWN)
         send_ntfy 4 "🛑 UPS has initiated system shutdown on $HOSTNAME."
