@@ -354,7 +354,23 @@ sudo systemctl enable nut-monitor
 
 ✅ This ensures your monitor service starts automatically after a reboot.
 
-7. Verify Process
+7. Enable and Check Logs (Don't skip!)
+
+The script attempts to write to the log each time an event is triggered.
+
+You **must give permissions** for nut to write to the log file:
+
+```bash
+sudo touch /var/log/ups-notify.log
+sudo chown nut:nut /var/log/ups-notify.log
+sudo chmod 664 /var/log/ups-notify.log
+```
+
+```bash
+cat /var/log/ups-notify.log
+```
+
+8. Verify Process
 
 Restart NUT services
 
@@ -410,14 +426,6 @@ sudo NOTIFYTYPE=ONLINE /usr/local/bin/ups-notify.sh
 > ```bash
 > curl -d "Test from the 3D printer!" ntfy.sh/your_topic_here
 > ```
-
-**8. Check Logs**
-
-The script logs each time an event is triggered.
-
-```bash
-cat /var/log/ups-notify.log
-```
 
 ---
 
