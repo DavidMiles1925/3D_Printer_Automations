@@ -6,7 +6,7 @@ EVENT="$NOTIFYTYPE"
 UPS_NAME="apcups"
 UPSCMD="/usr/bin/upsc"
 LOGFILE="/var/log/ups-notify.log"
-UPS_CMD="/usr/sbin/upscmd"
+UPS_CMD="/usr/bin/upscmd"
 UPS_AUTH="-u battcmd -p strongpasswordhere"
 
 set_beeper() {
@@ -28,12 +28,14 @@ send_ntfy() {
     local PRIORITY="$1"
     local MESSAGE="$2"
 
-# For older Raspberry Pi Zero, (or if 3206 Illegal instruction) delete below and enable the code in the comment.
-#   curl -sS -H "Priority: $PRIORITY" -d "$MESSAGE" "https://ntfy.sh/$TOPIC"
+    echo "$(date) Sending ntfy: $MESSAGE" >> "$LOGFILE"
+
     /usr/local/bin/ntfy publish \
         --priority "$PRIORITY" \
         "$TOPIC" \
-        "$MESSAGE"
+        "$MESSAGE" >> "$LOGFILE" 2>&1
+
+    echo "$(date) ntfy exit code=$?" >> "$LOGFILE"
 }
 
 # Log raw event info for debugging
