@@ -38,6 +38,21 @@ send_ntfy() {
     echo "$(date) ntfy exit code=$?" >> "$LOGFILE"
 }
 
+send_delayed_battery_alert() {
+    (
+        sleep 120
+
+        # Re-check that we are still on battery
+        STATUS=$(upsc "$UPS_NAME" ups.status 2>/dev/null)
+
+        if [[ "$STATUS" == *"OB"* ]]; then
+            send_ntfy 4 "⚠️ UPS is still on battery after 2 minutes on $HOSTNAME. Network may have stabilized. $(get_runtime)"
+        else
+            echo "$(date) Delayed battery alert cancelled. UPS status: $STATUS" >> "$LOGFILE"
+        fi
+    ) &
+}
+
 # Log raw event info for debugging
 {
     echo "----- $(date) -----"
@@ -49,6 +64,8 @@ case "$EVENT" in
     ONBATT)
         set_beeper enable
         send_ntfy 5 "⚠️ Power outage detected on $HOSTNAME. UPS is running on battery. $(get_runtime)"
+
+        send_delayed_battery_alert
         ;;
     ONLINE)
         set_beeper disable
